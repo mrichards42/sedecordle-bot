@@ -1,8 +1,9 @@
 import classNames from "classnames";
+import { LetterScore } from "../game";
 
 export interface Props {
   letter: string;
-  status?: "unknown" | "missing" | "present" | "correct";
+  status?: "unknown" | LetterScore;
   size?: "lg" | "md" | "sm";
 }
 
