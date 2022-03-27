@@ -13,7 +13,7 @@ const Letter = ({ letter, status = "unknown", size = "md" }: Props) => (
       "inline-flex justify-center items-center",
       "uppercase font-bold",
       {
-        "border border-current text-gray-800 dark:text-white":
+        "border border-current text-white":
           status === "unknown",
         "bg-gray-500 text-white": status === "missing",
         "bg-[#c9b458] text-white": status === "present",
