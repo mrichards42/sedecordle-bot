@@ -1,3 +1,7 @@
+import { randInt } from "../util";
+import words from "../words.json"; // from Norvig
+import realWords from "../realWords.json"; // from sedecordle
+
 export type LetterScore = "missing" | "present" | "correct";
 
 export const scoreWord = (word: string, target: string): LetterScore[] => {
@@ -20,4 +24,34 @@ export const scoreWord = (word: string, target: string): LetterScore[] => {
     }
     return "missing";
   });
+};
+
+export const allWords = new Set([...words, ...realWords]);
+
+export const isValidGuess = (guess: string) => allWords.has(guess);
+
+export const randWord = (): string => realWords[randInt(realWords.length)];
+
+export interface Game {
+  target: string;
+  guesses: string[];
+  isWon: boolean;
+}
+
+export const randGame = (): Game => ({
+  target: randWord(),
+  guesses: [],
+  isWon: false,
+});
+
+export const addGuess = (game: Game, word: string): Game => {
+  if (game.isWon) {
+    return game;
+  } else {
+    return {
+      ...game,
+      guesses: [...game.guesses, word],
+      isWon: game.target === word,
+    };
+  }
 };

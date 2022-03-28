@@ -1,21 +1,22 @@
 import { scoreWord } from "../game";
-import Letter, { Props as LetterProps } from "./Letter";
+import WordleLetter, { Props as WordleLetterProps } from "./WordleLetter";
 
 export interface Props {
   word: string;
   target?: string;
-  size?: LetterProps["size"];
+  size?: WordleLetterProps["size"];
+  status?: WordleLetterProps["status"];
 }
 
-const Word = ({ word, target, size }: Props) => {
+const WordleWord = ({ word, target, size, status }: Props) => {
   const score = target ? scoreWord(word, target) : null;
   return (
     <div>
       {word.split("").map((letter, idx) => (
-        <Letter
+        <WordleLetter
           key={idx}
           letter={letter}
-          status={score ? score[idx] : "unknown"}
+          status={status ?? (score ? score[idx] : "unknown")}
           size={size}
         />
       ))}
@@ -23,4 +24,4 @@ const Word = ({ word, target, size }: Props) => {
   );
 };
 
-export default Word;
+export default WordleWord;
