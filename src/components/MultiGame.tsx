@@ -57,7 +57,7 @@ const MultiGame = ({ count = 1, size }: Props) => {
     .sort();
 
   return (
-    <div className="flex flex-col h-screen">
+    <div className="flex flex-col h-full">
       <div>
         <FlatButton onClick={() => gamesDispatch({ type: "restart" })}>
           New
