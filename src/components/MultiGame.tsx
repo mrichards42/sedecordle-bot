@@ -46,9 +46,9 @@ const toggleFullscreen = () => {
   }
 };
 
-const MultiGame = ({ count = 1, size }: Props) => {
-  const [realSize, setSize] = useState(
-    size ?? (count === 1 ? "lg" : count < 8 ? "md" : count < 16 ? "sm" : "xs")
+const MultiGame = ({ count = 1, size: size_ }: Props) => {
+  const [size, setSize] = useState(
+    size_ ?? (count === 1 ? "lg" : count < 8 ? "md" : count < 16 ? "sm" : "xs")
   );
 
   const [games, gamesDispatch] = useReducer(gamesReducer, count, newGames);
@@ -89,10 +89,10 @@ const MultiGame = ({ count = 1, size }: Props) => {
           "flex flex-wrap justify-center",
           "shrink grow overflow-auto",
           {
-            "gap-3": realSize === "xs",
-            "gap-4": realSize === "sm",
-            "gap-6": realSize === "md",
-            "gap-8": realSize === "lg",
+            "gap-3": size === "xs",
+            "gap-4": size === "sm",
+            "gap-6": size === "md",
+            "gap-8": size === "lg",
           }
         )}
       >
@@ -102,7 +102,7 @@ const MultiGame = ({ count = 1, size }: Props) => {
             target={target}
             guesses={guesses}
             input={isWon ? undefined : input}
-            size={realSize}
+            size={size}
           />
         ))}
       </div>
