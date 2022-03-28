@@ -3,8 +3,9 @@ import words from "../words.json"; // from Norvig
 import realWords from "../realWords.json"; // from sedecordle
 
 export type LetterScore = "missing" | "present" | "correct";
+export type WordScore = LetterScore[];
 
-export const scoreWord = (word: string, target: string): LetterScore[] => {
+export const scoreWord = (word: string, target: string): WordScore => {
   const wordLetters = word.split("");
   const targetLetters = target.split("");
   // first pass = correct letters
@@ -35,12 +36,14 @@ export const randWord = (): string => realWords[randInt(realWords.length)];
 export interface Game {
   target: string;
   guesses: string[];
+  scores: WordScore[];
   isWon: boolean;
 }
 
 export const randGame = (): Game => ({
   target: randWord(),
   guesses: [],
+  scores: [],
   isWon: false,
 });
 
@@ -51,6 +54,7 @@ export const addGuess = (game: Game, word: string): Game => {
     return {
       ...game,
       guesses: [...game.guesses, word],
+      scores: [...game.scores, scoreWord(word, game.target)],
       isWon: game.target === word,
     };
   }

@@ -1,20 +1,19 @@
 import React from "react";
-import { isValidGuess } from "../game";
+import { Game, isValidGuess } from "../game";
 import WordleWord, { Props as WordleWordProps } from "./WordleWord";
 
 export interface Props {
   size?: WordleWordProps["size"];
-  target: string;
+  game: Game;
   input?: string;
-  guesses: string[];
 }
 
 type GuessListProps = Omit<Props, "input">;
 
-const GuessList = React.memo(({ guesses, target, size }: GuessListProps) => (
+const GuessList = React.memo(({ game, size }: GuessListProps) => (
   <>
-    {guesses.map((word, idx) => (
-      <WordleWord key={idx} word={word} target={target} size={size} />
+    {game.guesses.map((word, idx) => (
+      <WordleWord key={idx} word={word} score={game.scores[idx]} size={size} />
     ))}
   </>
 ));
@@ -34,11 +33,11 @@ const InputWord = ({ input, size }: InputWordProps) => (
   />
 );
 
-const Wordle = ({ input, guesses, target, size = "md" }: Props) => {
+const Wordle = ({ input, game, size = "md" }: Props) => {
   return (
     <div>
-      <GuessList guesses={guesses} target={target} size={size} />
-      {input != null && <InputWord input={input} size={size} />}
+      <GuessList game={game} size={size} />
+      {!game.isWon && input != null && <InputWord input={input} size={size} />}
     </div>
   );
 };

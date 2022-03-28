@@ -96,14 +96,8 @@ const MultiGame = ({ count = 1, size: size_ }: Props) => {
           }
         )}
       >
-        {games.map(({ target, guesses, isWon }, idx) => (
-          <Wordle
-            key={idx}
-            target={target}
-            guesses={guesses}
-            input={isWon ? undefined : input}
-            size={size}
-          />
+        {games.map((game, idx) => (
+          <Wordle key={idx} game={game} input={input} size={size} />
         ))}
       </div>
       <Keyboard dispatch={inputDispatch} guessedLetters={guessedLetters} />
