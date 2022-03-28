@@ -36,6 +36,16 @@ const FlatButton = ({ className, ...props }: any) => (
   />
 );
 
+const toggleFullscreen = () => {
+  if (!document.fullscreenElement) {
+    document.documentElement.requestFullscreen();
+  } else {
+    if (document.exitFullscreen) {
+      document.exitFullscreen();
+    }
+  }
+};
+
 const MultiGame = ({ count = 1, size }: Props) => {
   const [realSize, setSize] = useState(
     size ?? (count === 1 ? "lg" : count < 8 ? "md" : count < 16 ? "sm" : "xs")
@@ -58,7 +68,7 @@ const MultiGame = ({ count = 1, size }: Props) => {
 
   return (
     <div className="flex flex-col h-full">
-      <div>
+      <div className="flex">
         <FlatButton onClick={() => gamesDispatch({ type: "restart" })}>
           New
         </FlatButton>
@@ -66,6 +76,13 @@ const MultiGame = ({ count = 1, size }: Props) => {
         <FlatButton onClick={() => setSize("sm")}>sm</FlatButton>
         <FlatButton onClick={() => setSize("md")}>md</FlatButton>
         <FlatButton onClick={() => setSize("lg")}>lg</FlatButton>
+        <div className="flex-grow" />
+        <FlatButton
+          className="aspect-square text-lg"
+          onClick={toggleFullscreen}
+        >
+          ⛶
+        </FlatButton>
       </div>
       <div
         className={classNames(
