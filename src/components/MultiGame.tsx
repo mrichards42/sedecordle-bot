@@ -5,6 +5,7 @@ import useKeyboardInput from "../hooks/useKeyboardInput";
 import useWordleInput from "../hooks/useWordleInput";
 import Keyboard from "./Keyboard";
 import Wordle, { Props as WordleProps } from "./Wordle";
+import WordleHints from "./WordleHints";
 
 export interface Props {
   count?: number;
@@ -36,6 +37,35 @@ const FlatButton = ({ className, ...props }: any) => (
   />
 );
 
+const SymbolButton = ({ className, ...props }: any) => (
+  <FlatButton
+    // Font sizes correspond to xl and 2xl, but without the line spacing
+    className={classNames(
+      "aspect-square text-[1.25rem] md:text-[1.5rem] leading-none p-0",
+      className
+    )}
+    {...props}
+  />
+);
+
+const HintsButton = ({ hintLevel, onClick }: any) => (
+  <SymbolButton
+    onClick={(e: any) => {
+      onClick();
+      e.target.blur();
+    }}
+    title={
+      hintLevel === 2
+        ? "Remove hints"
+        : hintLevel === 1
+        ? "More hints"
+        : "Show hints"
+    }
+  >
+    {hintLevel === 2 ? "✺" : hintLevel === 1 ? "❋" : "❉"}
+  </SymbolButton>
+);
+
 const toggleFullscreen = () => {
   if (!document.fullscreenElement) {
     document.documentElement.requestFullscreen();
@@ -50,6 +80,7 @@ const MultiGame = ({ count = 1, size: size_ }: Props) => {
   const [size, setSize] = useState(
     size_ ?? (count === 1 ? "lg" : count < 8 ? "md" : count < 16 ? "sm" : "xs")
   );
+  const [hintLevel, setHintLevel] = useState(0);
 
   const [games, gamesDispatch] = useReducer(gamesReducer, count, newGames);
   const [input, inputDispatch] = useWordleInput({
@@ -77,12 +108,11 @@ const MultiGame = ({ count = 1, size: size_ }: Props) => {
         <FlatButton onClick={() => setSize("md")}>md</FlatButton>
         <FlatButton onClick={() => setSize("lg")}>lg</FlatButton>
         <div className="flex-grow" />
-        <FlatButton
-          className="aspect-square text-lg"
-          onClick={toggleFullscreen}
-        >
-          ⛶
-        </FlatButton>
+        <HintsButton
+          hintLevel={hintLevel}
+          onClick={() => setHintLevel((hintLevel + 1) % 3)}
+        />
+        <SymbolButton onClick={toggleFullscreen}>⛶</SymbolButton>
       </div>
       <div
         className={classNames(
@@ -97,7 +127,10 @@ const MultiGame = ({ count = 1, size: size_ }: Props) => {
         )}
       >
         {games.map((game, idx) => (
-          <Wordle key={idx} game={game} input={input} size={size} />
+          <div key={idx}>
+            {hintLevel > 0 && <WordleHints game={game} level={hintLevel} />}
+            <Wordle game={game} input={input} size={size} />
+          </div>
         ))}
       </div>
       <Keyboard dispatch={inputDispatch} guessedLetters={guessedLetters} />
