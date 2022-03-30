@@ -13,8 +13,7 @@ const WordleHints = React.memo(({ game, level }: Props) => {
   return (
     <div>
       <div>
-        {words1.length} possible
-        {level > 1 && ` / ${words2.length} real`}
+        {level === 1 ? `${words1.length} possible` : `${words2.length} real`}
       </div>
       <div>{wordList.length < 5 && wordList.join(", ")}</div>
     </div>

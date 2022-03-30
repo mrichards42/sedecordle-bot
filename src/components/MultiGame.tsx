@@ -1,26 +1,26 @@
 import classNames from "classnames";
-import { useReducer, useState } from "react";
+import { useReducer } from "react";
 import { addGuess, Game, isValidGuess, randGame } from "../game";
 import useKeyboardInput from "../hooks/useKeyboardInput";
 import useWordleInput from "../hooks/useWordleInput";
+import { randGen } from "../util";
 import Keyboard from "./Keyboard";
 import Wordle, { Props as WordleProps } from "./Wordle";
 import WordleHints from "./WordleHints";
 
-export interface Props {
-  count?: number;
-  size?: WordleProps["size"];
-}
-
 export type GameAction = { type: "restart" } | { type: "input"; value: string };
 
-const newGames = (count: number): Game[] =>
-  Array.from({ length: count }).map(() => randGame());
+type NewGames = (args: { count: number; seed?: number }) => Game[];
+
+const newGames: NewGames = ({ count, seed }) => {
+  const rand = randGen(seed);
+  return Array.from({ length: count }).map(() => randGame({ rand }));
+};
 
 const gamesReducer = (games: Game[], action: GameAction) => {
   switch (action.type) {
     case "restart":
-      return newGames(games.length);
+      return newGames({ count: games.length });
     case "input":
       return games.map((game) => addGuess(game, action.value));
     default:
@@ -29,60 +29,18 @@ const gamesReducer = (games: Game[], action: GameAction) => {
   }
 };
 
-const FlatButton = ({ className, ...props }: any) => (
-  <button
-    className={classNames("p-2 border border-current", className)}
-    type="button"
-    {...props}
-  />
-);
+export interface Props {
+  count: number;
+  hintLevel?: number;
+  seed?: number;
+  size?: WordleProps["size"];
+}
 
-const SymbolButton = ({ className, ...props }: any) => (
-  <FlatButton
-    // Font sizes correspond to xl and 2xl, but without the line spacing
-    className={classNames(
-      "aspect-square text-[1.25rem] md:text-[1.5rem] leading-none p-0",
-      className
-    )}
-    {...props}
-  />
-);
-
-const HintsButton = ({ hintLevel, onClick }: any) => (
-  <SymbolButton
-    onClick={(e: any) => {
-      onClick();
-      e.target.blur();
-    }}
-    title={
-      hintLevel === 2
-        ? "Remove hints"
-        : hintLevel === 1
-        ? "More hints"
-        : "Show hints"
-    }
-  >
-    {hintLevel === 2 ? "✺" : hintLevel === 1 ? "❋" : "❉"}
-  </SymbolButton>
-);
-
-const toggleFullscreen = () => {
-  if (!document.fullscreenElement) {
-    document.documentElement.requestFullscreen();
-  } else {
-    if (document.exitFullscreen) {
-      document.exitFullscreen();
-    }
-  }
-};
-
-const MultiGame = ({ count = 1, size: size_ }: Props) => {
-  const [size, setSize] = useState(
-    size_ ?? (count === 1 ? "lg" : count < 8 ? "md" : count < 16 ? "sm" : "xs")
+const MultiGame = ({ count, seed, size = "md", hintLevel = 0 }: Props) => {
+  const [games, gamesDispatch] = useReducer(gamesReducer, count, (count) =>
+    newGames({ count, seed })
   );
-  const [hintLevel, setHintLevel] = useState(0);
 
-  const [games, gamesDispatch] = useReducer(gamesReducer, count, newGames);
   const [input, inputDispatch] = useWordleInput({
     isValidGuess,
     onSubmit(input) {
@@ -98,22 +56,7 @@ const MultiGame = ({ count = 1, size: size_ }: Props) => {
     .sort();
 
   return (
-    <div className="flex flex-col h-full">
-      <div className="flex">
-        <FlatButton onClick={() => gamesDispatch({ type: "restart" })}>
-          New
-        </FlatButton>
-        <FlatButton onClick={() => setSize("xs")}>xs</FlatButton>
-        <FlatButton onClick={() => setSize("sm")}>sm</FlatButton>
-        <FlatButton onClick={() => setSize("md")}>md</FlatButton>
-        <FlatButton onClick={() => setSize("lg")}>lg</FlatButton>
-        <div className="flex-grow" />
-        <HintsButton
-          hintLevel={hintLevel}
-          onClick={() => setHintLevel((hintLevel + 1) % 3)}
-        />
-        <SymbolButton onClick={toggleFullscreen}>⛶</SymbolButton>
-      </div>
+    <>
       <div
         className={classNames(
           "flex flex-wrap justify-center",
@@ -128,13 +71,15 @@ const MultiGame = ({ count = 1, size: size_ }: Props) => {
       >
         {games.map((game, idx) => (
           <div key={idx}>
-            {hintLevel > 0 && <WordleHints game={game} level={hintLevel} />}
+            {hintLevel > 0 && !game.isWon && (
+              <WordleHints game={game} level={hintLevel} />
+            )}
             <Wordle game={game} input={input} size={size} />
           </div>
         ))}
       </div>
       <Keyboard dispatch={inputDispatch} guessedLetters={guessedLetters} />
-    </div>
+    </>
   );
 };
 

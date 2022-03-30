@@ -1,4 +1,4 @@
-import { randInt } from "../util";
+import { randGen, randElement, Rand } from "../util";
 import words from "../words.json"; // from Norvig
 import realWordsArray from "../realWords.json"; // from sedecordle
 export { default as realWordsArray } from "../realWords.json";
@@ -45,8 +45,8 @@ export const possibleWords = (game: Game): string[] => {
 
 export const isValidGuess = (guess: string) => allWords.has(guess);
 
-export const randWord = (): string =>
-  realWordsArray[randInt(realWordsArray.length)];
+export const randWord = (rand: Rand): string =>
+  randElement(rand, realWordsArray);
 
 export interface Game {
   target: string;
@@ -55,12 +55,17 @@ export interface Game {
   isWon: boolean;
 }
 
-export const randGame = (): Game => ({
-  target: randWord(),
-  guesses: [],
-  scores: [],
-  isWon: false,
-});
+type RandGame = (args?: { seed?: number; rand?: Rand }) => Game;
+
+export const randGame: RandGame = ({ seed, rand: rand_ } = {}) => {
+  const rand = rand_ ?? randGen(seed);
+  return {
+    target: randWord(rand),
+    guesses: [],
+    scores: [],
+    isWon: false,
+  };
+};
 
 export const addGuess = (game: Game, word: string): Game => {
   if (game.isWon) {
