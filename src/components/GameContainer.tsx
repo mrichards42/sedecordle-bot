@@ -1,9 +1,9 @@
-import classNames from "classnames";
 import { useState } from "react";
 import useQueryParam from "../hooks/useQueryParam";
 import { decodeGameId, encodeGameId, randSeed } from "../util";
 import MultiGame from "./MultiGame";
 import { Size } from "./WordleLetter";
+import { Button, PromptButton } from "./Button";
 
 const toggleFullscreen = () => {
   if (!document.fullscreenElement) {
@@ -17,55 +17,18 @@ const toggleFullscreen = () => {
 
 const newGameId = (count: number) => encodeGameId({ count, seed: randSeed() });
 
-const FlatButton = ({ className, ...props }: any) => (
-  <button
-    className={classNames("p-2 border border-current", className)}
-    type="button"
-    {...props}
-  />
-);
-
-const SymbolButton = ({ className, ...props }: any) => (
-  <FlatButton
-    // Font sizes correspond to xl and 2xl, but without the line spacing
-    className={classNames(
-      "aspect-square text-[1.25rem] md:text-[1.5rem] leading-none p-0",
-      className
-    )}
-    {...props}
-  />
-);
-
-const PromptButton = ({ label, value, onChange, ...props }: any) => (
-  <FlatButton
-    onClick={() => {
-      const result = prompt(label, value);
-      if (result != null) {
-        onChange(result);
-      }
-    }}
-    {...props}
-  >
-    {value}
-  </FlatButton>
-);
-
-const HintsButton = ({ hintLevel, onClick }: any) => (
-  <SymbolButton
+const HintsButton = ({ level, onClick }: any) => (
+  <Button
     onClick={(e: any) => {
       onClick();
       e.target.blur();
     }}
     title={
-      hintLevel === 2
-        ? "Remove hints"
-        : hintLevel === 1
-        ? "More hints"
-        : "Show hints"
+      level === 2 ? "Remove hints" : level === 1 ? "More hints" : "Show hints"
     }
   >
-    {hintLevel === 2 ? "✺" : hintLevel === 1 ? "❋" : "❉"}
-  </SymbolButton>
+    {level === 2 ? "✺" : level === 1 ? "❋" : "❉"}
+  </Button>
 );
 
 const sizes: Size[] = ["xs", "sm", "md", "lg"];
@@ -90,19 +53,19 @@ const GameContainer = ({ defaultCount = 1, defaultSize = "md" }: Props) => {
   return (
     <div className="flex flex-col h-full">
       <div className="flex">
-        <FlatButton onClick={() => setGameId(newGameId(count))}>New</FlatButton>
+        <Button onClick={() => setGameId(newGameId(count))}>New</Button>
         <div className="hidden md:block">
-          <FlatButton onClick={() => setSize("xs")}>xs</FlatButton>
-          <FlatButton onClick={() => setSize("sm")}>sm</FlatButton>
-          <FlatButton onClick={() => setSize("md")}>md</FlatButton>
-          <FlatButton onClick={() => setSize("lg")}>lg</FlatButton>
+          <Button onClick={() => setSize("xs")}>xs</Button>
+          <Button onClick={() => setSize("sm")}>sm</Button>
+          <Button onClick={() => setSize("md")}>md</Button>
+          <Button onClick={() => setSize("lg")}>lg</Button>
         </div>
-        <FlatButton
+        <Button
           className="md:hidden aspect-square"
           onClick={() => setSize(nextSize)}
         >
           {size}
-        </FlatButton>
+        </Button>
         <PromptButton
           title="Number"
           value={count}
@@ -111,10 +74,10 @@ const GameContainer = ({ defaultCount = 1, defaultSize = "md" }: Props) => {
         <div className="flex-grow" />
         <PromptButton title="Game id" value={gameId} onChange={setGameId} />
         <HintsButton
-          hintLevel={hintLevel}
+          level={hintLevel}
           onClick={() => setHintLevel((hintLevel + 1) % 3)}
         />
-        <SymbolButton onClick={toggleFullscreen}>⛶</SymbolButton>
+        <Button onClick={toggleFullscreen}>⛶</Button>
       </div>
       <MultiGame
         key={gameId}
