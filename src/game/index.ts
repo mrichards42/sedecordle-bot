@@ -35,13 +35,19 @@ export const scoreWord = (word: string, target: string): WordScore => {
 const matchesPattern = (word: string, guess: string, score: WordScore) =>
   scoreWord(guess, word).every((x, i) => x === score[i]);
 
-export const possibleWords = (game: Game): string[] => {
-  return allWordsArray.filter((word) =>
+export const possibleWords = (
+  game: Game,
+  wordList = allWordsArray
+): string[] => {
+  return wordList.filter((word) =>
     game.scores.every((score, idx) =>
       matchesPattern(word, game.guesses[idx], score)
     )
   );
 };
+
+export const possibleRealWords = (game: Game): string[] =>
+  possibleWords(game, realWordsArray);
 
 export const isValidGuess = (guess: string) => allWords.has(guess);
 

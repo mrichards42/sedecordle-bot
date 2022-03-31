@@ -1,5 +1,5 @@
 import React from "react";
-import { Game, possibleWords, realWords } from "../game";
+import { Game, possibleWords, possibleRealWords } from "../game";
 
 export interface Props {
   game: Game;
@@ -7,13 +7,13 @@ export interface Props {
 }
 
 const WordleHints = React.memo(({ game, level }: Props) => {
-  const words1 = possibleWords(game);
-  const words2 = words1.filter((w) => realWords.has(w));
-  const wordList = level === 1 ? words1 : words2;
+  const wordList = level === 1 ? possibleWords(game) : possibleRealWords(game);
   return (
     <div>
       <div>
-        {level === 1 ? `${words1.length} possible` : `${words2.length} real`}
+        {level === 1
+          ? `${wordList.length} possible`
+          : `${wordList.length} real`}
       </div>
       <div>{wordList.length < 5 && wordList.join(", ")}</div>
     </div>
