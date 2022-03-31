@@ -2,10 +2,12 @@ import classNames from "classnames";
 import { LetterScore } from "../game";
 import Letter from "./Letter";
 
+export type Size = "lg" | "md" | "sm" | "xs";
+
 export interface Props {
   letter: string;
   status?: "invalid" | "unknown" | LetterScore;
-  size?: "lg" | "md" | "sm" | "xs";
+  size?: Size;
 }
 
 const WordleLetter = ({ letter, status = "unknown", size = "md" }: Props) => (

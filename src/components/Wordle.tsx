@@ -1,9 +1,10 @@
 import React from "react";
 import { Game, isValidGuess } from "../game";
-import WordleWord, { Props as WordleWordProps } from "./WordleWord";
+import { Size } from "./WordleLetter";
+import WordleWord from "./WordleWord";
 
 export interface Props {
-  size?: WordleWordProps["size"];
+  size?: Size;
   game: Game;
   input?: string;
 }

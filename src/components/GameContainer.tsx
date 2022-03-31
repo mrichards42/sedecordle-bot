@@ -3,7 +3,7 @@ import { useState } from "react";
 import useQueryParam from "../hooks/useQueryParam";
 import { decodeGameId, encodeGameId, randSeed } from "../util";
 import MultiGame from "./MultiGame";
-import { Props as WordleProps } from "./Wordle";
+import { Size } from "./WordleLetter";
 
 const toggleFullscreen = () => {
   if (!document.fullscreenElement) {
@@ -68,9 +68,13 @@ const HintsButton = ({ hintLevel, onClick }: any) => (
   </SymbolButton>
 );
 
+const sizes: Size[] = ["xs", "sm", "md", "lg"];
+const nextSize = (size: Size) =>
+  sizes[(sizes.indexOf(size) + 1) % sizes.length];
+
 export interface Props {
   defaultCount?: number;
-  defaultSize?: WordleProps["size"];
+  defaultSize?: Size;
 }
 
 const GameContainer = ({ defaultCount = 1, defaultSize = "md" }: Props) => {
@@ -87,10 +91,18 @@ const GameContainer = ({ defaultCount = 1, defaultSize = "md" }: Props) => {
     <div className="flex flex-col h-full">
       <div className="flex">
         <FlatButton onClick={() => setGameId(newGameId(count))}>New</FlatButton>
-        <FlatButton onClick={() => setSize("xs")}>xs</FlatButton>
-        <FlatButton onClick={() => setSize("sm")}>sm</FlatButton>
-        <FlatButton onClick={() => setSize("md")}>md</FlatButton>
-        <FlatButton onClick={() => setSize("lg")}>lg</FlatButton>
+        <div className="hidden md:block">
+          <FlatButton onClick={() => setSize("xs")}>xs</FlatButton>
+          <FlatButton onClick={() => setSize("sm")}>sm</FlatButton>
+          <FlatButton onClick={() => setSize("md")}>md</FlatButton>
+          <FlatButton onClick={() => setSize("lg")}>lg</FlatButton>
+        </div>
+        <FlatButton
+          className="md:hidden aspect-square"
+          onClick={() => setSize(nextSize)}
+        >
+          {size}
+        </FlatButton>
         <div className="flex-grow" />
         <PromptButton
           title="Number"
