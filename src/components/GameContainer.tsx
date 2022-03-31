@@ -103,12 +103,12 @@ const GameContainer = ({ defaultCount = 1, defaultSize = "md" }: Props) => {
         >
           {size}
         </FlatButton>
-        <div className="flex-grow" />
         <PromptButton
           title="Number"
           value={count}
           onChange={(count: string) => setGameId(newGameId(+count))}
         />
+        <div className="flex-grow" />
         <PromptButton title="Game id" value={gameId} onChange={setGameId} />
         <HintsButton
           hintLevel={hintLevel}
