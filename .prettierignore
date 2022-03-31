@@ -1,4 +1,11 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+# Specific filetypes
+*.md
+
+# Some very large json files
+*words.json
+test-data.json
+
+### The rest of this is just the gitignore
 
 # dependencies
 /node_modules
