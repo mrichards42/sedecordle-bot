@@ -53,7 +53,9 @@ const GameContainer = ({ defaultCount = 1, defaultSize = "md" }: Props) => {
   return (
     <div className="flex flex-col h-full">
       <div className="flex">
-        <Button onClick={() => setGameId(newGameId(count))}>New</Button>
+        <Button onClick={(e: any) => {
+          e.target.blur();
+          setGameId(newGameId(count))}}>New</Button>
         <div className="hidden md:block">
           <Button onClick={() => setSize("xs")}>xs</Button>
           <Button onClick={() => setSize("sm")}>sm</Button>
